@@ -1,0 +1,106 @@
+---
+title: "ES207_hw4_Guo"
+output:
+  html_document:
+    df_print: paged
+---
+3.1 Compute both nonparametric and parametric 95% interval estimates for the median of the granodiorite data of exercise 2.3. Which is more appropriate for these data? Why?
+
+```{r}
+# Nonparametric Interval Estimate for the Median
+Granodiorite <- c(6.0, 0.5, 0.4, 0.7, 0.8, 6.0, 5.0, 0.6, 1.2, 0.3, 0.2, 0.5, 0.5, 10, 0.2, 0.2, 1.7, 3.0)
+n <- length(Granodiorite)
+sorted <- sort(Granodiorite)
+hist(sorted)
+alpha <- 0.05
+# A critical value x' is obtained from Table B5 corresponding to α/2
+x1 <- 7
+# The lower confidence limit
+R1 <- x1 + 1
+# The upper confidence limit
+R2 <- n - x1
+# Based on R1 = 8 and R2 = 11, the 95.6% confidence limit for C0.5 is the interval between the 8th and 18th ranked observations
+low.non <- sorted[R1]
+up.non <- sorted[R2]
+low.non
+up.non
+```
+
+From the calculation above, 0.5 <= medain <= 0.8 at α/2 = 0.022
+
+```{r}
+# Parametric Interval Estimate for the Median
+logdata <- log(sorted)
+hist(logdata)
+y <- length(logdata)
+mean.y <- mean(logdata)
+sd.y <- sd(logdata)
+t <- qt(c(0.025, 0.975), 17)
+# calculate the lower and upper boundary 
+lim.para <- exp(mean.y + t * (sd.y/sqrt(y)))
+lim.para
+```
+
+From the calculation above, 0.506 <= log(median) <= 1.804 at α/2 = 0.025
+
+The nonparametric estimate is more appropriate since the original data or the log data doesn't show a no obvious normal distribution. 
+
+
+3.4 Construct the most appropriate 95 percent interval estimates for the mean and median annual streamflows for the Conecuh River at Brantley, Alabama (data in Appendix C2).
+
+```{r}
+library(tidyverse)
+streamflow <- read_csv('D:/Users/guoha/Desktop/ES_UCM/Spring_2020/ES_207/Documents/Tem/ES207_hw4/Annual_streamflows_for_the_Conecuh_River_AL.csv')
+hist(log(streamflow$`Flow (cfs)`))
+# since the log histogram shows a roughly symmetrical image, we use parametric interval estimation
+# median
+s <- length(streamflow$`Flow (cfs)`)
+sdata <- log(streamflow$`Flow (cfs)`)
+mean.s <- mean(sdata)
+sd.s <- sd(sdata)
+t.s <- qt(c(0.025, 0.975), (s-1))
+# calculate the lower and upper boundary 
+lim.s <- exp(mean.s + t.s * (sd.s/sqrt(s)))
+lim.s
+```
+
+So the log(median) is in the range of 524.10 to 764.42 when alpha is 0.05
+```{r}
+# mean
+me <- qt(0.95,(s-1))*sd(sdata)/sqrt(s)
+low <- mean(sdata)-me
+up <- mean(sdata)+me
+print(low)
+print(up)
+```
+
+
+
+so the true log(mean) is in the range of 6.29449 to 6.60631 when alpha is 0.05
+
+
+
+4. The Everglades wetland ecosystems are phosphorus limited. After the Everglades Agriculture Areas (EAA) were established (enabled by a series of federal government constructed water diversion systems for draining part of the Everglades wetland), phosphorus-rich agriculture runoff reached the Everglades wetland and resulted in dramatic changes in parts of the Everglades wetlands. To better protect the Everglades, many studies were conducted in the late 1980s and the 1990s to learn about the effects of phosphorus enrichment in the Everglades. One study focused on estimating the background level of phosphorus concentration.
+To identify which site is not affected by the agriculture runoff, researchers measured phosphatase activity (APA) in sites known to be affected (TP > 30 ug/L) and sites that are unaffected by agriculture runoff. Phosphatase is an enzyme produced by organisms in low P environment. Because producing this enzyme costs energy, organisms do not produce them when bio-available phosphorus are present. As a result, high APA is an indicator of P limitation. The data file apa.s contains both APA and TP concentrations. It can be imported into R using function source.
+(a) Compare the distributions of APA from sites with TP > 30 ug/L and APA from sites with TP < 30 ug/L using graphical tools we learned in Chapter 3.
+
+```{r}
+apa <- source('apa.s')
+tp1 <- apa$value %>% filter(tp > 30)
+tp2 <- apa$value %>% filter(tp <= 30)
+qqplot(tp1$apa, tp2$apa, plot.it = TRUE, main="Comparison of APA")
+qqplot(log(tp1$apa), log(tp2$apa), plot.it = TRUE, main="Comparison of log(APA)")
+```
+
+(b) What is the nature of difference between the two populations of APA?
+
+From the qqplot above, the logarithm one is closer to a straight line. So it is more likely to be multiplicative relationship between the two sets of APA data.
+
+(c) Use an appropriate test to determine whether the difference is statistically signiffcant and describe the result in non-technical terms.
+
+```{r}
+t.test(tp1$apa, tp2$apa, paired = FALSE, conf.level=0.95)
+```
+
+We can see from the T-test, the p-value here is very small, which is p-value = 8.428e-14, so that means those two sets of data are significantly different, less than 8.428e-14 probabality that they are just random and not significantly different. 
+
