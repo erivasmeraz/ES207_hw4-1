@@ -32,6 +32,9 @@ lim.para
 # 3.4 Construct the most appropriate 95 percent interval estimates for the mean and median annual streamflows for the Conecuh River at Brantley, Alabama (data in Appendix C2).
 library(tidyverse)
 streamflow <- read_csv('D:/Users/guoha/Desktop/ES_UCM/Spring_2020/ES_207/Documents/Tem/ES207_hw4/Annual_streamflows_for_the_Conecuh_River_AL.csv')
+#Change working directory to 'ES207_hw4' and read in the specfic .csv file to shorten path name
+#Preview data with head() to ensure correct data was loaded
+
 hist(log(streamflow$`Flow (cfs)`))
 # since the log histogram shows a roughly symmetrical image, we use parametric interval estimation
 # median
