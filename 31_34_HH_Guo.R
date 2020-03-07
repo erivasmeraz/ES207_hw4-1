@@ -31,7 +31,7 @@ lim.para
 
 # 3.4 Construct the most appropriate 95 percent interval estimates for the mean and median annual streamflows for the Conecuh River at Brantley, Alabama (data in Appendix C2).
 library(tidyverse)
-streamflow <- read_csv('D:/Users/guoha/Desktop/ES_UCM/Spring_2020/ES_207/Documents/Tem/ES207_hw4/Annual_streamflows_for_the_Conecuh_River_AL.csv')
+streamflow <- read_csv('Annual_streamflows_for_the_Conecuh_River_AL.csv')
 #Change working directory to 'ES207_hw4' and read in the specfic .csv file to shorten path name and help create a resusable code
 #Preview data with head() to ensure correct data was loaded
 
@@ -39,8 +39,9 @@ streamflow <- read_csv('D:/Users/guoha/Desktop/ES_UCM/Spring_2020/ES_207/Documen
 hist(log(streamflow$`Flow (cfs)`))
 # since the log histogram shows a roughly symmetrical image, we use parametric interval estimation
 # median
-s <- length(streamflow$`Flow (cfs)`)
-sdata <- log(streamflow$`Flow (cfs)`)
+flow <- streamflow$`Flow (cfs)`
+s <- length(flow)
+sdata <- log(flow)
 mean.s <- mean(sdata)
 sd.s <- sd(sdata)
 t.s <- qt(c(0.025, 0.975), (s-1))
@@ -55,3 +56,4 @@ up <- mean(sdata)+me
 print(low)
 print(up)
 # so the true log(mean) is in the range of 6.29449 to 6.60631 when alpha is 0.05
+
